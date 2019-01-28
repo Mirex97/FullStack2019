@@ -6,13 +6,35 @@ const Feedback = props => {
 };
 
 const Statistics = props => {
-  return <h1>statistiikka</h1>;
-};
-
-const Results = props => {
+  if (
+    props.feedback.good === 0 &&
+    props.feedback.neutral === 0 &&
+    props.feedback.bad === 0
+  ) {
+    return (
+      <div>
+        <h1>statistiikka</h1>
+        <p>Ei yhtään palautetta annettu</p>
+      </div>
+    );
+  }
   return (
     <div>
-      {props.name} {props.result} <br />
+      <h1>statistiikka</h1>
+      <Statistic name="hyvä" stat={props.feedback.good} />
+      <Statistic name="neutraali" stat={props.feedback.neutral} />
+      <Statistic name="huono" stat={props.feedback.bad} />
+      <Statistic name="yhteensä" stat={Sum(props.feedback)} />
+      <Statistic name="keskiarvo" stat={Average(props.feedback)} />
+      <Statistic name="positiivisia" stat={Positives(props.feedback)} />
+    </div>
+  );
+};
+
+const Statistic = props => {
+  return (
+    <div>
+      {props.name} {props.stat} <br />
     </div>
   );
 };
@@ -37,35 +59,30 @@ const Positives = function(values) {
   if (isNaN(x)) {
     x = 0;
   }
+  x = x + " %";
   return x;
 };
 
-const Details = props => {
-  return (
-    <div>
-      yhteensä {Sum(props.feedback)} <br />
-      keskiarvo {Average(props.feedback)} <br />
-      positiivisia {Positives(props.feedback)} % <br />
-    </div>
-  );
-};
+const Button = props => (
+  <button onClick={props.handleClick}>{props.text}</button>
+);
 
 const App = () => {
-  const buttonGood = () => {
+  const setGood = () => {
     const newFeedback = {
       ...feedback,
       good: feedback.good + 1
     };
     setFeedback(newFeedback);
   };
-  const buttonNeutral = () => {
+  const setNeutral = () => {
     const newFeedback = {
       ...feedback,
       neutral: feedback.neutral + 1
     };
     setFeedback(newFeedback);
   };
-  const buttonBad = () => {
+  const setBad = () => {
     const newFeedback = {
       ...feedback,
       bad: feedback.bad + 1
@@ -82,14 +99,10 @@ const App = () => {
   return (
     <div>
       <Feedback />
-      <button onClick={buttonGood}>hyvä</button>
-      <button onClick={buttonNeutral}>neutraali</button>
-      <button onClick={buttonBad}>neutraali</button>
-      <Statistics />
-      <Results name="hyvä" result={feedback.good} />
-      <Results name="neutraali" result={feedback.neutral} />
-      <Results name="huono" result={feedback.bad} />
-      <Details feedback={feedback} />
+      <Button handleClick={() => setGood()} text="hyvä" />
+      <Button handleClick={() => setNeutral()} text="neutraali" />
+      <Button handleClick={() => setBad()} text="huono" />
+      <Statistics feedback={feedback} />
     </div>
   );
 };
