@@ -21,21 +21,26 @@ const Statistics = props => {
   return (
     <div>
       <h1>statistiikka</h1>
-      <Statistic name="hyvä" stat={props.feedback.good} />
-      <Statistic name="neutraali" stat={props.feedback.neutral} />
-      <Statistic name="huono" stat={props.feedback.bad} />
-      <Statistic name="yhteensä" stat={Sum(props.feedback)} />
-      <Statistic name="keskiarvo" stat={Average(props.feedback)} />
-      <Statistic name="positiivisia" stat={Positives(props.feedback)} />
+      <table>
+        <tbody>
+          <Statistic name="hyvä" stat={props.feedback.good} />
+          <Statistic name="neutraali" stat={props.feedback.neutral} />
+          <Statistic name="huono" stat={props.feedback.bad} />
+          <Statistic name="yhteensä" stat={Sum(props.feedback)} />
+          <Statistic name="keskiarvo" stat={Average(props.feedback)} />
+          <Statistic name="positiivisia" stat={Positives(props.feedback)} />
+        </tbody>
+      </table>
     </div>
   );
 };
 
 const Statistic = props => {
   return (
-    <div>
-      {props.name} {props.stat} <br />
-    </div>
+    <tr>
+      <td>{props.name} </td>
+      <td>{props.stat}</td>
+    </tr>
   );
 };
 
