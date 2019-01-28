@@ -5,14 +5,34 @@ const Button = props => (
   <button onClick={props.handleClick}>{props.text}</button>
 );
 
+const Increment = function(table, x) {
+  const copy = [...table];
+  copy[x] += 1;
+  return copy;
+};
+
 const App = props => {
   const [selected, setSelected] = useState(0);
+
+  const [points, setPoints] = useState(
+    Array.apply(null, new Array(props.anecdotes.length)).map(
+      Number.prototype.valueOf,
+      0
+    )
+  );
 
   return (
     <div>
       {props.anecdotes[selected]} <br />
+      has {points[selected]} votes <br />
       <Button
-        handleClick={() => setSelected(Math.floor(Math.random() * props.anecdotes.length))}
+        handleClick={() => setPoints(Increment(points, selected))}
+        text="vote"
+      />
+      <Button
+        handleClick={() =>
+          setSelected(Math.floor(Math.random() * props.anecdotes.length))
+        }
         text="next anecdote"
       />
     </div>
