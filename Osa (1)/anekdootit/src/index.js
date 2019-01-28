@@ -11,6 +11,22 @@ const Increment = function(table, x) {
   return copy;
 };
 
+const MostVotes = props => {
+  let x = 0;
+  var i;
+  for (i = 0; i < props.anecdotes.length; i++) {
+    if (props.votes[i] > props.votes[x]) {
+      x = i;
+    }
+  }
+  return (
+    <div>
+      {props.anecdotes[x]} <br />
+      has {props.votes[x]} votes
+    </div>
+  );
+};
+
 const App = props => {
   const [selected, setSelected] = useState(0);
 
@@ -23,6 +39,7 @@ const App = props => {
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       {props.anecdotes[selected]} <br />
       has {points[selected]} votes <br />
       <Button
@@ -35,6 +52,8 @@ const App = props => {
         }
         text="next anecdote"
       />
+      <h1>Anecdote with most votes</h1>
+      <MostVotes anecdotes={props.anecdotes} votes={points} />
     </div>
   );
 };
