@@ -12,7 +12,7 @@ const App = props => {
     <div>
       {props.anecdotes[selected]} <br />
       <Button
-        handleClick={() => setSelected(Math.floor(Math.random() * 6))}
+        handleClick={() => setSelected(Math.floor(Math.random() * props.anecdotes.length))}
         text="next anecdote"
       />
     </div>
