@@ -42,14 +42,19 @@ const App = () => {
         return name.toUpperCase() === newName.toUpperCase();
       })
     ) {
-      alert(`${newName} on jo luettelossa, korvataanko vanha numero uudella?`);
-      personManager.update(foundId, nameObject).then(response => {
-        personManager.getAll().then(response => {
-          setPersons([].concat(response));
+      if (
+        window.confirm(
+          `${newName} on jo luettelossa, korvataanko vanha numero uudella?`
+        )
+      ) {
+        personManager.update(foundId, nameObject).then(response => {
+          personManager.getAll().then(response => {
+            setPersons([].concat(response));
+          });
         });
         setNewName("");
         setNewNumber("");
-      });
+      }
     } else {
       personManager.create(nameObject).then(response => {
         setPersons(persons.concat(response));
