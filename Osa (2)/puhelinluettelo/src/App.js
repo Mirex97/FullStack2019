@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import personManager from "./Communication";
 import { Persons, Filter, PersonForm } from "./Components";
 
 const App = () => {
@@ -8,24 +8,24 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filter, setNewFilter] = useState("");
 
-  const hook = () => {
-    console.log("effect");
-    axios.get("http://localhost:3001/persons").then(response => {
-      console.log("promise fulfilled");
-      setPersons(response.data);
+  useEffect(() => {
+    personManager.getAll().then(response => {
+      setPersons(response);
     });
-  };
-  useEffect(hook, []);
+  }, []);
 
   const handleNameChange = event => {
+    event.preventDefault();
     setNewName(event.target.value);
   };
 
   const handleNumberChange = event => {
+    event.preventDefault();
     setNewNumber(event.target.value);
   };
 
   const handleFilterChange = event => {
+    event.preventDefault();
     setNewFilter(event.target.value);
   };
 
@@ -35,15 +35,28 @@ const App = () => {
       name: newName,
       number: newNumber
     };
+    var foundId;
     if (
-      persons.some(({ name }) => name.toUpperCase() === newName.toUpperCase())
+      persons.some(({ name, id }) => {
+        foundId = id;
+        return name.toUpperCase() === newName.toUpperCase();
+      })
     ) {
-      alert(`${newName} on jo luettelossa`);
+      alert(`${newName} on jo luettelossa, korvataanko vanha numero uudella?`);
+      personManager.update(foundId, nameObject).then(response => {
+        personManager.getAll().then(response => {
+          setPersons([].concat(response));
+        });
+        setNewName("");
+        setNewNumber("");
+      });
     } else {
-      setPersons(persons.concat(nameObject));
+      personManager.create(nameObject).then(response => {
+        setPersons(persons.concat(response));
+        setNewName("");
+        setNewNumber("");
+      });
     }
-    setNewName("");
-    setNewNumber("");
   };
 
   return (
@@ -64,7 +77,7 @@ const App = () => {
 
       <h3>Numerot</h3>
 
-      <Persons filter={filter} persons={persons} />
+      <Persons filter={filter} persons={persons} setPersons={setPersons} />
     </div>
   );
 };

@@ -1,10 +1,24 @@
 import React from "react";
+import personManager from "./Communication";
+
+const deletePerson = (a, setPersons) => {
+  if (window.confirm(`Poistetaanko ${a.name}`)) {
+    personManager.remove(a.id).then(
+      personManager.getAll().then(response => {
+        setPersons([].concat(response));
+      })
+    );
+  }
+};
 
 const Person = props => {
   if (props.filter === "") {
     return (
       <div>
-        {props.person.name} {props.person.number}
+        {props.person.name} {props.person.number}{" "}
+        <button onClick={() => deletePerson(props.person, props.setPersons)}>
+          poista
+        </button>
       </div>
     );
   }
@@ -12,7 +26,7 @@ const Person = props => {
   if (props.person.name.toUpperCase().startsWith(props.filter.toUpperCase())) {
     return (
       <div>
-        {props.person.name} {props.person.number}
+        {props.person.name} {props.person.number} <button>poista</button>
       </div>
     );
   } else {
@@ -22,7 +36,12 @@ const Person = props => {
 
 const Persons = props => {
   return props.persons.map((person, index) => (
-    <Person filter={props.filter} key={index} person={person} />
+    <Person
+      filter={props.filter}
+      key={index}
+      person={person}
+      setPersons={props.setPersons}
+    />
   ));
 };
 
@@ -57,4 +76,4 @@ const Filter = props => {
     </form>
   );
 };
-export { Persons, Filter, PersonForm};
+export { Persons, Filter, PersonForm };
