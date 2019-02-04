@@ -2,11 +2,20 @@ import React, { useState, useEffect } from "react";
 import personManager from "./Communication";
 import { Persons, Filter, PersonForm } from "./Components";
 
+const Notification = ({ message, type }) => {
+  if (message === null) {
+    return null;
+  }
+
+  return <div className={type}>{message}</div>;
+};
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setNewFilter] = useState("");
+  const [goodMessage, setGoodMessage] = useState(null);
 
   useEffect(() => {
     personManager.getAll().then(response => {
@@ -52,12 +61,28 @@ const App = () => {
             setPersons([].concat(response));
           });
         });
+
+        setGoodMessage(
+          `Puhelinnumero vaihdettu onnistuneesti`
+        );
+        setTimeout(() => {
+          setGoodMessage(null);
+        }, 5000);
+
         setNewName("");
         setNewNumber("");
       }
     } else {
       personManager.create(nameObject).then(response => {
         setPersons(persons.concat(response));
+
+        setGoodMessage(
+          `Lisättiin ${nameObject.name}`
+        );
+        setTimeout(() => {
+          setGoodMessage(null);
+        }, 5000);
+
         setNewName("");
         setNewNumber("");
       });
@@ -67,6 +92,8 @@ const App = () => {
   return (
     <div>
       <h2>Puhelinluettelo</h2>
+
+      <Notification message={goodMessage} type="good" />
 
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
 
