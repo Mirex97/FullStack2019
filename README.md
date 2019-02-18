@@ -3,3 +3,4 @@
 * [Osa 1 tehtävät](https://github.com/Mirex97/FullStack2019/tree/master/Osa%20(1))
 * [Osa 2 tehtävät](https://github.com/Mirex97/FullStack2019/tree/master/Osa%20(2))
 * [Osa 3 tehtävät](https://github.com/Mirex97/puhelinluettelobackend)
+* [Osa 4 tehtävät / blogilista](https://github.com/Mirex97/FullStack2019/tree/master/Osa%20(4)/blogilista)
