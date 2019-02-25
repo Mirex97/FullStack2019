@@ -3,6 +3,7 @@ import Blog from "./components/Blog";
 import BlogForm from "./components/BlogForm";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import PropTypes from "prop-types";
 
 const Notification = ({ notification }) => {
   if (notification.message === null) {
@@ -22,17 +23,29 @@ const Notification = ({ notification }) => {
   return <div style={style}>{notification.message}</div>;
 };
 
+Notification.propTypes = {
+  notification: PropTypes.object.isRequired
+};
+
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [hideButton, setHideButton] = useState("create new");
   const [notification, setNotification] = useState({
     message: null
   });
+  const [newBlogVisible, setNewBlogVisible] = useState(false);
 
   useEffect(() => {
-    blogService.getAll().then(blogs => setBlogs(blogs));
+    blogService.getAll().then(blogs =>
+      setBlogs(
+        blogs.sort(function(a, b) {
+          return b.likes - a.likes;
+        })
+      )
+    );
   }, []);
 
   useEffect(() => {
@@ -49,7 +62,6 @@ const App = () => {
     try {
       const user = await loginService.login({ username, password });
       window.localStorage.setItem("loggedBlogUser", JSON.stringify(user));
-      console.log("tokeeen???" + user.token);
       BlogForm.setToken(user.token);
       setUser(user);
       setUsername("");
@@ -71,10 +83,15 @@ const App = () => {
     window.localStorage.removeItem("loggedBlogUser");
   };
 
-  const refresher = event => {
-    blogService.getAll().then(blogs => setBlogs(blogs));
+  const refresher = () => {
+    blogService.getAll().then(blogs =>
+      setBlogs(
+        blogs.sort(function(a, b) {
+          return b.likes - a.likes;
+        })
+      )
+    );
   };
-
 
   const logoutForm = () => (
     <form onSubmit={handleLogout}>
@@ -126,10 +143,27 @@ const App = () => {
       <br />
       <br />
       {logoutForm()}
-      <h2>create new</h2>
-      {<BlogForm.form refresher={refresher} setNotification={setNotification} />}
+      {
+        <BlogForm.form
+          visible={newBlogVisible}
+          refresher={refresher}
+          setNotification={setNotification}
+        />
+      }
+      <button
+        onClick={() => {
+          setNewBlogVisible(!newBlogVisible);
+          if (!newBlogVisible) {
+            setHideButton("cancel");
+          } else {
+            setHideButton("create new");
+          }
+        }}
+      >
+        {hideButton}
+      </button>
       {blogs.map(blog => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog setNotification={setNotification} user={user} refresher={refresher} key={blog.id} blog={blog} />
       ))}
     </div>
   );

@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
+import PropTypes from "prop-types";
 
 const baseUrl = "/api/blogs";
 
 let token = null;
-let refresh = false;
-
-const getRefresh = () => (refresh);
 
 const setToken = newToken => {
   token = `bearer ${newToken}`;
@@ -29,9 +27,12 @@ const form = props => {
     event.preventDefault();
     try {
       await submit({ title, author, url });
-      
+
       props.refresher();
-      props.setNotification({ message: `a new blog ${title} by ${author} added` , type: "ok" });
+      props.setNotification({
+        message: `a new blog ${title} by ${author} added`,
+        type: "ok"
+      });
       setTimeout(() => {
         props.setNotification({ message: null });
       }, 5000);
@@ -39,45 +40,61 @@ const form = props => {
       setAuthor("");
       setUrl("");
     } catch (exception) {
-        props.setNotification({ message: `Found empty field(s) while creating blog` , type: "error" });
-        setTimeout(() => {
-          props.setNotification({ message: null });
-        }, 5000);
+      props.setNotification({
+        message: "Found empty field(s) while creating blog",
+        type: "error"
+      });
+      setTimeout(() => {
+        props.setNotification({ message: null });
+      }, 5000);
     }
   };
 
+  if (!props.visible) {
+    return <div />;
+  }
+
   return (
-    <form onSubmit={handleBlogSumbit}>
-      <div>
-        title:{" "}
-        <input
-          type="text"
-          value={title}
-          name="Title"
-          onChange={({ target }) => setTitle(target.value)}
-        />
-      </div>
-      <div>
-        author:{" "}
-        <input
-          type="text"
-          value={author}
-          name="Author"
-          onChange={({ target }) => setAuthor(target.value)}
-        />
-      </div>
-      <div>
-        url:{" "}
-        <input
-          type="text"
-          value={url}
-          name="Url"
-          onChange={({ target }) => setUrl(target.value)}
-        />
-      </div>
-      <button type="submit">create</button>
-    </form>
+    <div>
+      <h2>create new</h2>
+      <form onSubmit={handleBlogSumbit}>
+        <div>
+          title:{" "}
+          <input
+            type="text"
+            value={title}
+            name="Title"
+            onChange={({ target }) => setTitle(target.value)}
+          />
+        </div>
+        <div>
+          author:{" "}
+          <input
+            type="text"
+            value={author}
+            name="Author"
+            onChange={({ target }) => setAuthor(target.value)}
+          />
+        </div>
+        <div>
+          url:{" "}
+          <input
+            type="text"
+            value={url}
+            name="Url"
+            onChange={({ target }) => setUrl(target.value)}
+          />
+        </div>
+        <button type="submit">create</button>
+      </form>
+    </div>
   );
 };
 
-export default { form, setToken, getRefresh};
+form.propTypes = {
+  setNotification: PropTypes.func.isRequired,
+  visible: PropTypes.bool.isRequired,
+  refresher: PropTypes.func.isRequired
+};
+
+export default { form, setToken };
