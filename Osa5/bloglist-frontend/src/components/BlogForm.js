@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
+import { useField } from "../hooks";
 
 const baseUrl = "/api/blogs";
 
@@ -19,26 +20,30 @@ const submit = async blog => {
 };
 
 const form = props => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
+  const title = useField("text");
+  const author = useField("text");
+  const url = useField("text");
 
   const handleBlogSumbit = async event => {
     event.preventDefault();
     try {
-      await submit({ title, author, url });
+      await submit({
+        title: title.value,
+        author: author.value,
+        url: url.value
+      });
 
       props.refresher();
       props.setNotification({
-        message: `a new blog ${title} by ${author} added`,
+        message: `a new blog ${title.value} by ${author.value} added`,
         type: "ok"
       });
       setTimeout(() => {
         props.setNotification({ message: null });
       }, 5000);
-      setTitle("");
-      setAuthor("");
-      setUrl("");
+      title.reset();
+      author.reset();
+      url.reset();
     } catch (exception) {
       props.setNotification({
         message: "Found empty field(s) while creating blog",
@@ -61,28 +66,28 @@ const form = props => {
         <div>
           title:{" "}
           <input
-            type="text"
-            value={title}
+            type={title.type}
+            value={title.value}
             name="Title"
-            onChange={({ target }) => setTitle(target.value)}
+            onChange={title.onChange}
           />
         </div>
         <div>
           author:{" "}
           <input
-            type="text"
-            value={author}
+            type={author.type}
+            value={author.value}
             name="Author"
-            onChange={({ target }) => setAuthor(target.value)}
+            onChange={author.onChange}
           />
         </div>
         <div>
           url:{" "}
           <input
-            type="text"
-            value={url}
+            type={url.type}
+            value={url.value}
             name="Url"
-            onChange={({ target }) => setUrl(target.value)}
+            onChange={url.onChange}
           />
         </div>
         <button type="submit">create</button>

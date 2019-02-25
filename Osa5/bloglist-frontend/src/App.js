@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useField } from "./hooks";
 import Blog from "./components/Blog";
 import BlogForm from "./components/BlogForm";
 import blogService from "./services/blogs";
@@ -30,8 +31,8 @@ Notification.propTypes = {
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const username = useField("text");
+  const password = useField("password");
   const [hideButton, setHideButton] = useState("create new");
   const [notification, setNotification] = useState({
     message: null
@@ -60,17 +61,21 @@ const App = () => {
   const handleLogin = async event => {
     event.preventDefault();
     try {
-      const user = await loginService.login({ username, password });
+      const user = await loginService.login({
+        username: username.value,
+        password: password.value
+      });
       window.localStorage.setItem("loggedBlogUser", JSON.stringify(user));
       BlogForm.setToken(user.token);
       setUser(user);
-      setUsername("");
-      setPassword("");
+      username.reset();
+      password.reset();
       setNotification({ message: "Logged in!", type: "good" });
       setTimeout(() => {
         setNotification({ message: null });
       }, 5000);
     } catch (exception) {
+      console.log(exception);
       setNotification({ message: "wrong username or password", type: "error" });
       setTimeout(() => {
         setNotification({ message: null });
@@ -106,19 +111,17 @@ const App = () => {
       <div>
         käyttäjätunnus
         <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
+          type={username.type}
+          value={username.value}
+          onChange={username.onChange}
         />
       </div>
       <div>
         salasana
         <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
+          type={password.type}
+          value={password.value}
+          onChange={password.onChange}
         />
       </div>
       <button type="submit">kirjaudu</button>
@@ -163,7 +166,13 @@ const App = () => {
         {hideButton}
       </button>
       {blogs.map(blog => (
-        <Blog setNotification={setNotification} user={user} refresher={refresher} key={blog.id} blog={blog} />
+        <Blog
+          setNotification={setNotification}
+          user={user}
+          refresher={refresher}
+          key={blog.id}
+          blog={blog}
+        />
       ))}
     </div>
   );
