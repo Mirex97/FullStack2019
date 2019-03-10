@@ -1,4 +1,6 @@
 import React from "react";
+import { connect } from "react-redux";
+import { emptyNotification } from "../reducers/notificationReducer";
 
 var timeout;
 
@@ -9,16 +11,14 @@ const Notification = props => {
     borderWidth: 1
   };
 
-  let notification = props.store.getState().notification;
+  let notification = props.notification;
 
   if (notification === "") {
     return <div />;
   }
   clearTimeout(timeout);
   timeout = setTimeout(() => {
-    props.store.dispatch({
-      type: "EMPTY"
-    });
+    props.emptyNotification();
   }, 5000);
   return (
     <div>
@@ -27,4 +27,20 @@ const Notification = props => {
   );
 };
 
-export default Notification;
+const mapStateToProps = state => {
+  return {
+    notification: state.notification,
+    anecdotes: state.anecdotes
+  };
+};
+
+const mapDispatchToProps = {
+  emptyNotification
+};
+
+const ConnectedNotification = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Notification);
+
+export default ConnectedNotification;

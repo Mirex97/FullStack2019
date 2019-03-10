@@ -6,12 +6,17 @@ const reducer = (state = initialState, action) => {
       return "";
     case "VOTE":
       return `you voted "${action.data.content}"`;
-
     case "NEW_ANECDOTE":
       return `you created "${action.data.content}"`;
     default:
       return state;
   }
+};
+
+export const emptyNotification = () => {
+  return {
+    type: "EMPTY"
+  };
 };
 
 export default reducer;

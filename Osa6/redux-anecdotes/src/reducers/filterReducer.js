@@ -9,4 +9,11 @@ const reducer = (state = initialState, action) => {
   }
 };
 
+export const filterContent = content => {
+  return {
+    type: "FILTER",
+    data: { content }
+  };
+};
+
 export default reducer;
