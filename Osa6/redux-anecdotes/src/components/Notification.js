@@ -1,8 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
-import { emptyNotification } from "../reducers/notificationReducer";
-
-var timeout;
+import {
+  setNotification
+} from "../reducers/notificationReducer";
 
 const Notification = props => {
   const style = {
@@ -11,18 +11,13 @@ const Notification = props => {
     borderWidth: 1
   };
 
-  let notification = props.notification;
 
-  if (notification === "") {
+  if (props.notification === "") {
     return <div />;
   }
-  clearTimeout(timeout);
-  timeout = setTimeout(() => {
-    props.emptyNotification();
-  }, 5000);
   return (
     <div>
-      <div style={style}>{notification}</div>
+      <div style={style}>{props.notification}</div>
     </div>
   );
 };
@@ -35,7 +30,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  emptyNotification
+  setNotification
 };
 
 const ConnectedNotification = connect(
